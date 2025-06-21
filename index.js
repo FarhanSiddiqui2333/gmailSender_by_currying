@@ -24,70 +24,80 @@ const emailVal = document.getElementById("to");
 const subjectVal = document.getElementById("subject");
 const messageVal = document.getElementById("msg");
 const Container = document.querySelector(".container .bottomMenu .messages");
-let day = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thrusday",
-  "Friday",
-  "Saturday",
-];
-let date = new Date();
-currentTime = `${
-  day[date.getDay()]
-} ${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
 
-function sendMail() {
-  const email = emailVal.value.trim();
-  const subject = subjectVal.value.trim();
-  const message = messageVal.value.trim();
-  const time = currentTime;
+function sendMail(email) {
+  email = emailVal.value.trim();
 
-  if (!email || !subject || !message) {
-    alert("Please fill in all fields before sending.");
-    return;
-  }
+  return function (subject) {
+    subject = subjectVal.value.trim();
 
-  const data = {
-    name: "Farhan Siddiqui",
-    email,
-    subject,
-    message,
-    time,
-    avatar: "https://cdn-icons-png.flaticon.com/512/9187/9187604.png",
+    return function (message) {
+      message = messageVal.value.trim();
+
+      let day = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+
+      let date = new Date();
+
+      let currentTime = `${day[date.getDay()]} ${
+        date.getMonth() + 1
+      }/${date.getDate()}/${date.getFullYear()}`;
+
+      const time = currentTime;
+
+      if (!email || !subject || !message) {
+        alert("Please fill in all fields before sending.");
+        return;
+      }
+
+      const data = {
+        name: "Farhan Siddiqui",
+        email,
+        subject,
+        message,
+        time,
+        avatar: "https://cdn-icons-png.flaticon.com/512/9187/9187604.png",
+      };
+
+      if (data.email === "farhansiddiqui2333@gmail.com") {
+        let url = "assets/avatar.png";
+        data.avatar = url;
+      }
+
+      emailjs
+        .send("service_64qndap", "template_884ptlb", data)
+        .then(() => {
+          // Add message to UI (optional)
+          Container.innerHTML += `
+            <div class="msg">
+              <img src="${data.avatar}" alt="" />
+              <p>
+                <span class="name userGmail">${data.email}</span>
+                <span class="userSubject">${data.subject}</span>
+                <span class="msgTo userMsg">${data.message}</span>
+              </p>
+              <span class="time">${data.time}</span>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-ellipsis-vertical menu"></i>
+            </div>
+          `;
+
+          // Clear input fields
+          emailVal.value = "";
+          subjectVal.value = "";
+          messageVal.value = "";
+        })
+        .catch((error) => {
+          console.error("Failed to send email:", error);
+          alert("Failed to send email. Please try again.");
+        });
+    };
   };
-
-  if (data.email == "farhansiddiqui2333@gmail.com") {
-    let url = "assets/avatar.png";
-    data.avatar = url;
-  }
-
-  emailjs
-    .send("service_64qndap", "template_884ptlb", data)
-    .then(() => {
-      // Add message to UI (optional)
-      Container.innerHTML += `
-        <div class="msg">
-          <img src="${data.avatar}" alt="" />
-          <p>
-            <span class="name userGmail">${data.email}</span>
-            <span class="userSubject">${data.subject}</span>
-            <span class="msgTo userMsg">${data.message}</span>
-          </p>
-          <span class="time">${data.time}</span>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-ellipsis-vertical menu"></i>
-        </div>
-      `;
-
-      // Clear input fields
-      emailVal.value = "";
-      subjectVal.value = "";
-      messageVal.value = "";
-    })
-    .catch((error) => {
-      console.error("Failed to send email:", error);
-      alert("Failed to send email. Please try again.");
-    });
 }
